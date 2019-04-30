@@ -5,3 +5,7 @@ target
 tmp
 dist
 .cache
+
+.gradle
+.project
+.settings
