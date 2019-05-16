@@ -30,10 +30,6 @@ public class HomeController extends Controller {
         mongoClient = MongoClients.create();
     }
 
-    public HomeController(){
-        
-    }
-
     public Result index() {
         return ok("TWR-UMS");
     }
