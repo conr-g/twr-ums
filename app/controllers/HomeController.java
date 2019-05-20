@@ -15,19 +15,22 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoIterable;
+import static com.mongodb.client.model.Filters.eq;
 
 import org.bson.Document;
 
 import forms.User;
 
 public class HomeController extends Controller {
-    FormFactory formFactory;
+    private FormFactory formFactory;
     private MongoClient mongoClient;
+    private MongoDatabase database;
 
     @Inject
     public HomeController(FormFactory formFactory) {
         this.formFactory = formFactory;
         mongoClient = MongoClients.create();
+        database = mongoClient.getDatabase("waitingroom");
     }
 
     public Result index() {
@@ -42,12 +45,8 @@ public class HomeController extends Controller {
 
     public Result createUser(Http.Request request) {
         Form<User> userForm = formFactory.form(User.class).bindFromRequest(request);
-        System.out.println(userForm.get().getUsername());
-        System.out.println(userForm.get().getPassword());
 
-        MongoDatabase database = mongoClient.getDatabase("waitingroom");
-
-        Document document = new Document("user", userForm.get().getUsername())
+        Document document = new Document("username", userForm.get().getUsername())
                                  .append("password", userForm.get().getPassword());
 
         MongoCollection<Document> collection = database.getCollection("users");
@@ -56,7 +55,18 @@ public class HomeController extends Controller {
         return ok();
     }
 
-    public Result login() {
-        return ok();
+    public Result login(Http.Request request) {
+        Form<User> userForm = formFactory.form(User.class).bindFromRequest(request);
+
+        MongoCollection<Document> collection = database.getCollection("users");
+        Document user = collection.find(eq("username", userForm.get().getUsername())).first();
+
+        if (user.get("password").equals(userForm.get().getPassword())) {
+            System.out.println("Login successful");
+            return ok();
+        } else {
+            System.out.println("Login failed");
+            return ok();
+        }
     }
 }
