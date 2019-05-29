@@ -19,7 +19,8 @@ import static com.mongodb.client.model.Filters.eq;
 
 import org.bson.Document;
 
-import forms.User;
+import model.User;
+
 
 public class HomeController extends Controller {
     private FormFactory formFactory;
@@ -46,27 +47,29 @@ public class HomeController extends Controller {
     public Result createUser(Http.Request request) {
         Form<User> userForm = formFactory.form(User.class).bindFromRequest(request);
 
-        Document document = new Document("username", userForm.get().getUsername())
+       /* Document document = new Document("username", userForm.get().getUsername())
                                  .append("password", userForm.get().getPassword());
 
         MongoCollection<Document> collection = database.getCollection("users");
-        collection.insertOne(document);
+        collection.insertOne(document);*/
 
         return ok();
     }
 
     public Result login(Http.Request request) {
-        Form<User> userForm = formFactory.form(User.class).bindFromRequest(request);
+       /* Form<User> userForm = formFactory.form(User.class).bindFromRequest(request);
 
         MongoCollection<Document> collection = database.getCollection("users");
         Document user = collection.find(eq("username", userForm.get().getUsername())).first();
 
-        if (user.get("password").equals(userForm.get().getPassword())) {
+        if (user != null && user.get("password").equals(userForm.get().getPassword())) {
             System.out.println("Login successful");
-            return ok();
+            return ok(Json.toJson(user));
         } else {
+
             System.out.println("Login failed");
+            */
             return ok();
-        }
+
     }
 }
