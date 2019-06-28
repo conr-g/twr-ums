@@ -3,6 +3,8 @@ package controllers;
 import api.post.UserHandler;
 import model.UserInput;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import dao.InMemoryUserRepository;
 import dao.MongoUserRepository;
 import model.User;
 import play.libs.Json;
@@ -28,7 +30,7 @@ public class UserController extends Controller {
             ex.printStackTrace();
         }
         //throw the process at the handler to free up the thread.
-        UserHandler handler = new UserHandler(new MongoUserRepository());
+        UserHandler handler = new UserHandler(new InMemoryUserRepository());
         handler.create(input);
         return ok(Json.toJson(input));
     }
@@ -36,7 +38,7 @@ public class UserController extends Controller {
     public Result checkLogin(Http.Request request){
         JsonNode node = request.body().asJson();
         UserInput input = Json.fromJson(node, UserInput.class);
-        UserHandler handler = new UserHandler(new MongoUserRepository());
+        UserHandler handler = new UserHandler(new InMemoryUserRepository());
         System.out.println("attempting to log in with following info : " + node.asText());
         Optional<User> user = handler.login(input);
         if(user.isPresent()&&

@@ -17,7 +17,8 @@ public class InMemoryUserRepository implements UserRepository{
 
     @Override
     public Optional<User> loginUser(UserInput user) {
-        InMemoryUserRepository.dataStore.put("cgerrard", User.builder().username("cgerrard").password("name jeff").build());
+        InMemoryUserRepository.dataStore.put(user.getUsername(), User.builder().username(user.getUsername()).password(user.getPassword()).build());
+        System.out.println(InMemoryUserRepository.dataStore.get(user.getUsername()).getUsername());
         return Optional.of(InMemoryUserRepository.dataStore.get(user.getUsername()));
     }
 }
