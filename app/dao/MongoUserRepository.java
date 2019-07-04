@@ -13,24 +13,25 @@ import java.util.Optional;
 import static com.mongodb.client.model.Filters.eq;
 
 public class MongoUserRepository implements UserRepository {
-
+    private static final String databaseName = "waitingroom";
+    private static final String collectionName = "users";
 
     @Override
     public void save(User user) {
          MongoClient mongoClient = MongoClients.create();
-         MongoDatabase database = mongoClient.getDatabase("waitingroom");
+         MongoDatabase database = mongoClient.getDatabase(databaseName);
          Document document = new Document("username", user.getUsername())
                 .append("password", user.getPassword());
 
-         MongoCollection<Document> collection = database.getCollection("users");
+         MongoCollection<Document> collection = database.getCollection(collectionName);
          collection.insertOne(document);
     }
 
     @Override
     public Optional<User> loginUser(UserInput user) {
         MongoClient mongoClient = MongoClients.create();
-        MongoDatabase database = mongoClient.getDatabase("waitingroom");
-        MongoCollection<Document> collection = database.getCollection("users");
+        MongoDatabase database = mongoClient.getDatabase(databaseName);
+        MongoCollection<Document> collection = database.getCollection(collectionName);
         Document userFromDb = collection.find(eq("username", user.getUsername())).first();
         User returned = User.builder()
                 .username(userFromDb.getString("username"))
